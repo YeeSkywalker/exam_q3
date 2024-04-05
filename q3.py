@@ -1,3 +1,21 @@
+'''
+    The code can be accessed on GitHub: https://github.com/YeeSkywalker/exam_q3
+    Set up:
+    1. Ensure you have Python version later than 3.4.
+
+    2. Install virtual environment by running the following command in the terminal:
+        python3 -m venv env
+
+    3. Access the virtual environment:
+        source env/bin/activate
+
+    4. Install the requests library to fetch data from the RESTful API:
+        pip3 install requests
+
+    5. Compile the code:
+        python3 q3.py
+'''
+
 import requests
 import statistics
 url = "https://restcountries.com/v3.1/all" # Restful API url
@@ -20,7 +38,7 @@ def Q3():
                     name = countryData.get('name', 'N/A').get('common', 'N/A') # Get the common name of current country; if not exist, return N/A
                     population = countryData.get('population', 0) # Get the population of current country; if not exist, return 0
                     area = countryData.get('area', 1) # Get the area of current country; if not exist, return 0
-                    density = population // area # Caculate the density of current country
+                    density = population / area # Caculate the density of current country
                     densities.append(density) # Save density for Part2
                     print('{:<50s} {:<10f}'.format(*[name, density]))
             else:
@@ -43,7 +61,7 @@ def Q3():
     def part3():
         unMembers = 0 # Count number of UN members
         euroCurrency = 0 # Count number of countries using Euro
-        partThreeUrl = url + "?fields=unMember,currencies,independent" # Filter reponse based on feilds unMember, currencies, independent
+        partThreeUrl = url + "?fields=unMember,currencies" # Filter reponse based on feilds unMember, currencies
         try:
             response = requests.get(partThreeUrl) # Send the GET request to API
             if response.status_code == 200: # If get the response successfully
@@ -51,11 +69,10 @@ def Q3():
                 for countryData in data:
                     isMember = countryData.get('unMember', False) # Check if current country / area is UN members
                     currency = countryData.get('currencies', {}).get('EUR', None) # Check if current country / area using Euro
-                    independent = countryData.get('independent', False) # Check if current region is country
                     unMembers += 1 if isMember else 0 # If current country is UN member, add 1 to the count
-                    euroCurrency += 1 if currency and independent else 0 # If current region is an independent country and using euro, add 1 to the count
+                    euroCurrency += 1 if currency else 0 # If current region is using euro, add 1 to the count
                 print(f"The number of countries who are UN members is: {unMembers}")
-                print(f"The number of countries who use the Euro as a currency: {euroCurrency}")
+                print(f"The number of (independent or not independent) countries who use the Euro as a currency: {euroCurrency}")
             else:
                 print(f"Error: Status code: {response.status_code}")
         except Exception as e:
